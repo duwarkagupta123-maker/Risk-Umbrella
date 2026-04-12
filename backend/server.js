@@ -28,6 +28,7 @@ app.use(express.json({ limit: '1mb' }));
  */
 const defaultOrigins = [
   'http://localhost:5173',
+  'http://localhost:3000',
   'https://risk-umbrella.netlify.app',
 ];
 
@@ -45,10 +46,19 @@ const allowedOrigins = parseOrigins();
 app.use(
   cors({
     origin(origin, callback) {
-      // Non-browser clients (curl, Postman) often omit Origin
+      // Non-browser clients (curl, Postman) often omit Origin — always allow
       if (!origin) return callback(null, true);
+
+      // Allow ANY localhost port (covers Vite :5173, CRA :3000, etc.)
+      if (/^http:\/\/localhost(:\d+)?$/.test(origin)) {
+        return callback(null, true);
+      }
+
+      // Check the production allowlist
       if (allowedOrigins.includes(origin)) return callback(null, true);
-      return callback(null, false);
+
+      // Block everything else
+      return callback(new Error(`CORS: origin ${origin} not allowed`), false);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
