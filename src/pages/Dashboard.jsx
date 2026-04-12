@@ -1,18 +1,20 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { AlertCircle, FileText, CheckCircle2, ShieldAlert, Umbrella } from 'lucide-react'
+import { AlertCircle, FileText, CheckCircle2, ShieldAlert, Umbrella, Loader2 } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { useNavigate } from 'react-router-dom'
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const user = useStore(state => state.user)
+  const { user, policies, healthScore, gaps, fetchPolicies, loading } = useStore()
   const userName = user?.name || 'there'
-  const healthScore = useStore(state => state.healthScore)
-  const gaps = useStore(state => state.gaps)
   
   const [jargonInput, setJargonInput] = useState('')
   const [translation, setTranslation] = useState(null)
+
+  useEffect(() => {
+    fetchPolicies()
+  }, [fetchPolicies])
 
   const handleTranslate = () => {
     if (!jargonInput) return;
@@ -28,11 +30,25 @@ export default function Dashboard() {
     })
   }
 
+  const totalMonthlyPremium = policies.reduce((acc, p) => acc + (p.premium || 0), 0)
+  const totalCoverage = policies.reduce((acc, p) => acc + (p.coverageAmount || 0), 0)
+  const hasGaps = policies.some(p => p.exclusions && p.exclusions.length > 0) || policies.length < 3
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-4xl font-extrabold text-brand-textDark tracking-tight mb-2">Hello, {userName}</h1>
-        <p className="text-gray-600 text-lg">Your overall protection is at <span className="font-bold bg-orange-100 text-orange-800 px-2 py-0.5 rounded">{healthScore}%</span>. We've identified critical gaps in your coverage.</p>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-extrabold text-brand-textDark tracking-tight mb-2">Hello, {userName}</h1>
+          <p className="text-gray-600 text-lg">
+            Your overall protection is at <span className="font-bold bg-orange-100 text-orange-800 px-2 py-0.5 rounded">{healthScore}%</span>. 
+            {policies.length === 0 ? " You haven't added any policies yet." : ` We've identified ${hasGaps ? 'critical gaps' : 'some areas to optimize'} in your coverage.`}
+          </p>
+        </div>
+        {loading && (
+          <div className="flex items-center gap-2 text-brand-blue font-medium text-sm bg-blue-50 px-4 py-2 rounded-full border border-blue-100 italic">
+            <Loader2 className="w-4 h-4 animate-spin" /> Updating shields...
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -99,7 +115,7 @@ export default function Dashboard() {
             
             <div className="relative w-72 h-72 rounded-full border-2 border-dashed border-gray-300 mt-12 flex items-center justify-center">
               {/* Umbrella Canvas SVG representation */}
-              <div className="absolute inset-x-0 bottom-1/2 w-full h-1/2 bg-brand-blue/90 rounded-t-full drop-shadow-xl overflow-hidden clip-umbrella">
+              <div className={`absolute inset-x-0 bottom-1/2 w-full h-1/2 rounded-t-full drop-shadow-xl overflow-hidden clip-umbrella transition-colors duration-700 ${policies.length > 0 ? 'bg-brand-blue/90' : 'bg-gray-200'}`}>
                 {/* Divide into sections */}
                 <div className="absolute w-px h-full bg-white/20 left-1/3 bottom-0 origin-bottom transform -rotate-45"></div>
                 <div className="absolute w-px h-full bg-white/20 left-2/3 bottom-0 origin-bottom transform rotate-45"></div>
@@ -109,29 +125,17 @@ export default function Dashboard() {
               <div className="absolute top-[calc(50%+80px)] w-6 h-6 border-4 border-t-0 border-gray-700 rounded-b-full right-[calc(50%-12px)]"></div>
               
               {/* Labels */}
-              <span className="absolute top-1/4 left-1/4 text-white font-bold text-sm tracking-widest drop-shadow-md">Life</span>
-              <span className="absolute top-1/4 right-1/4 text-white font-bold text-sm tracking-widest drop-shadow-md">Health</span>
-              <span className="absolute bottom-1/4 left-6 text-white font-bold text-sm tracking-widest drop-shadow-md">Income</span>
-              <span className="absolute bottom-1/4 right-6 text-white font-bold text-sm tracking-widest drop-shadow-md">Property</span>
-
-              {/* Warnings */}
-              {!gaps.find(g=>g.type==='flood').patched && (
-                <div className="absolute top-1/4 right-0 transform translate-x-1/2 px-3 py-1 bg-red-500/80 backdrop-blur text-white text-[10px] font-bold uppercase rounded-full shadow-lg border border-red-400 whitespace-nowrap flex items-center gap-1">
-                  <ShieldAlert className="w-3 h-3" /> No Flood Cover
-                </div>
-              )}
-              {!gaps.find(g=>g.type==='disability').patched && (
-                <div className="absolute bottom-1/3 left-0 transform -translate-x-1/4 px-3 py-1 bg-red-600 shadow-red-500/50 shadow-lg text-white text-[10px] font-bold uppercase rounded-full whitespace-nowrap flex items-center gap-1">
-                  <AlertCircle className="w-3 h-3" /> No Disability
-                </div>
-              )}
+              <span className={`absolute top-1/4 left-1/4 font-bold text-sm tracking-widest drop-shadow-md ${policies.some(p => p.type === 'life') ? 'text-white' : 'text-gray-400'}`}>Life</span>
+              <span className={`absolute top-1/4 right-1/4 font-bold text-sm tracking-widest drop-shadow-md ${policies.some(p => p.type === 'health') ? 'text-white' : 'text-gray-400'}`}>Health</span>
+              <span className={`absolute bottom-1/4 left-6 font-bold text-sm tracking-widest drop-shadow-md ${policies.some(p => p.type === 'income') ? 'text-white' : 'text-gray-300'}`}>Income</span>
+              <span className={`absolute bottom-1/4 right-6 font-bold text-sm tracking-widest drop-shadow-md ${policies.some(p => p.type === 'property' || p.type === 'home') ? 'text-white' : 'text-gray-300'}`}>Property</span>
             </div>
 
             {/* Overall Protection Status */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white px-8 py-4 rounded-2xl shadow-xl shadow-brand-blue/5 text-center border border-red-100">
-               <div className="text-[10px] font-bold text-red-500 uppercase tracking-widest mb-1">Protection Status</div>
-               <div className="text-red-700 font-bold mb-1">Umbrella Breach Detected</div>
-               <div className="text-xs text-gray-500">Add natural disaster riders to seal the leaks.</div>
+            <div className={`absolute bottom-6 left-1/2 -translate-x-1/2 bg-white px-8 py-4 rounded-2xl shadow-xl shadow-brand-blue/5 text-center border ${hasGaps ? 'border-red-100' : 'border-green-100'}`}>
+               <div className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${hasGaps ? 'text-red-500' : 'text-green-500'}`}>Protection Status</div>
+               <div className={`font-bold mb-1 ${hasGaps ? 'text-red-700' : 'text-green-700'}`}>{hasGaps ? 'Umbrella Breach Detected' : 'Umbrella Fully Intact'}</div>
+               <div className="text-xs text-gray-500">{hasGaps ? 'Add natural disaster riders to seal the leaks.' : 'Your portfolio is optimally balanced.'}</div>
             </div>
           </div>
 
@@ -139,13 +143,13 @@ export default function Dashboard() {
             {/* Seal the gaps banner */}
             <div className="bg-brand-indigo rounded-3xl p-6 text-white relative overflow-hidden flex flex-col justify-between shadow-xl shadow-brand-indigo/20 md:col-span-2">
               <div className="absolute -right-10 -bottom-10 opacity-10">
-                <Umbrella className="w-64 h-64" />
+                <UmbrellaSVG className="w-64 h-64" />
               </div>
               <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
                   <span className="inline-block px-3 py-1 rounded-full border border-white/20 text-[10px] font-bold uppercase tracking-widest mb-3">Market Intelligence</span>
                   <h3 className="text-2xl font-bold mb-2">Seal the Gaps?</h3>
-                  <p className="text-indigo-100 text-sm">Our algorithm found 3 market alternatives that offer <span className="text-orange-400 font-bold">full flood coverage</span> for a similar premium.</p>
+                  <p className="text-indigo-100 text-sm">Our algorithm found market alternatives that offer <span className="text-orange-400 font-bold">full coverage</span> for a similar premium.</p>
                 </div>
                 <button 
                   onClick={() => navigate('/coverage')}
@@ -162,7 +166,7 @@ export default function Dashboard() {
               <div className="flex justify-between items-end">
                 <div>
                   <h3 className="text-5xl font-extrabold text-brand-blue">{healthScore < 80 ? 'Good' : 'Excellent'}</h3>
-                  <p className="text-sm text-gray-500 mt-2">Top 10% of users in Mumbai</p>
+                  <p className="text-sm text-gray-500 mt-2">Active shields: {policies.length}</p>
                 </div>
                 <div className="w-20 h-20 rounded-full border-[6px] border-orange-500 border-t-orange-100 flex items-center justify-center text-xl font-bold text-brand-blue transform rotate-45">
                    <span className="-rotate-45">{healthScore}%</span>
@@ -175,8 +179,8 @@ export default function Dashboard() {
                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Monthly Premium</span>
                <div className="flex justify-between items-end">
                  <div>
-                   <h3 className="text-4xl font-extrabold text-brand-blue">₹8,500<span className="text-xl text-gray-400 font-normal">/mo</span></h3>
-                   <p className="text-sm font-medium text-gray-600 mt-2">Next billing on Oct 12, 2023</p>
+                   <h3 className="text-4xl font-extrabold text-brand-blue">₹{totalMonthlyPremium.toLocaleString()}<span className="text-xl text-gray-400 font-normal">/mo</span></h3>
+                   <p className="text-sm font-medium text-gray-600 mt-2">Total coverage: ₹{(totalCoverage / 100000).toFixed(1)}L</p>
                  </div>
                  <div className="bg-orange-100 p-3 rounded-xl">
                    <div className="w-6 h-4 bg-orange-500 rounded flex items-center justify-center relative">
@@ -190,5 +194,16 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+  )
+}
+
+function UmbrellaSVG({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2v20" />
+      <path d="M2 12s5-3 10-3 10 3 10 3" />
+      <path d="M12 9c2.1 0 4 .9 5.4 2.4" />
+      <path d="M6.6 11.4C8 9.9 9.9 9 12 9" />
+    </svg>
   )
 }

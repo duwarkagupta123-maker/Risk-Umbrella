@@ -1,15 +1,11 @@
 import { create } from 'zustand'
+import { api } from '../api'
 
 export const useStore = create((set, get) => ({
   // ── Auth ──────────────────────────────────────────────────────────────────
   isLoggedIn: !!localStorage.getItem('ru_token'),
   token: localStorage.getItem('ru_token') || null,
   user: JSON.parse(localStorage.getItem('ru_user') || 'null'),
-
-  // Computed display name: use backend user or fallback
-  get userName() {
-    return get().user?.name || 'Guest';
-  },
 
   login: ({ token, user }) => {
     localStorage.setItem('ru_token', token);
@@ -20,13 +16,24 @@ export const useStore = create((set, get) => ({
   logout: () => {
     localStorage.removeItem('ru_token');
     localStorage.removeItem('ru_user');
-    set({ isLoggedIn: false, token: null, user: null });
+    set({ isLoggedIn: false, token: null, user: null, policies: [] });
   },
 
   // ── Policies ──────────────────────────────────────────────────────────────
-  // Seeded with one local fallback; replaced on first successful API load
   policies: [],
-  setPolicies: (policies) => set({ policies }),
+  loading: false,
+  error: null,
+
+  fetchPolicies: async () => {
+    set({ loading: true, error: null });
+    try {
+      const data = await api.getUserPolicies();
+      // data = { policies: [...] }
+      set({ policies: data.policies || [], loading: false });
+    } catch (err) {
+      set({ error: err.message, loading: false });
+    }
+  },
 
   // ── Health / Gaps ─────────────────────────────────────────────────────────
   healthScore: 75,
