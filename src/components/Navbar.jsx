@@ -4,7 +4,8 @@ import { Bell, User, Umbrella, Settings, LogOut, ChevronDown } from 'lucide-reac
 import { useStore } from '../store/useStore'
 
 export default function Navbar() {
-  const userName = useStore((state) => state.userName)
+  const user = useStore((state) => state.user)
+  const userName = user?.name || 'Guest'
   const logout = useStore((state) => state.logout)
   const navigate = useNavigate()
   

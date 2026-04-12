@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom'
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const userName = useStore(state => state.userName)
+  const user = useStore(state => state.user)
+  const userName = user?.name || 'there'
   const healthScore = useStore(state => state.healthScore)
   const gaps = useStore(state => state.gaps)
   
