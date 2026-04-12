@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { AlertCircle, FileText, CheckCircle2, ShieldAlert, Umbrella } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { useNavigate } from 'react-router-dom'
 
 export default function Dashboard() {
+  const navigate = useNavigate()
   const userName = useStore(state => state.userName)
   const healthScore = useStore(state => state.healthScore)
   const gaps = useStore(state => state.gaps)
@@ -50,7 +52,7 @@ export default function Dashboard() {
             className="w-full bg-white p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-blue/20 outline-none resize-none h-32 mb-4 text-sm"
             placeholder="Paste your policy text here... (e.g., 'Section 4.2: Indemnity shall be limited to...')"
           />
-          <button onClick={handleTranslate} className="w-full bg-brand-blue hover:bg-brand-indigo text-white font-semibold py-3 rounded-xl transition-colors text-sm mb-6 shadow-md shadow-brand-blue/20">
+          <button onClick={handleTranslate} className="w-full bg-brand-blue hover:bg-brand-indigo text-white font-semibold py-3 rounded-xl transition-all text-sm mb-6 shadow-md shadow-brand-blue/20 hover:scale-105 active:scale-95">
             TRANSLATE POLICY
           </button>
 
@@ -144,7 +146,10 @@ export default function Dashboard() {
                   <h3 className="text-2xl font-bold mb-2">Seal the Gaps?</h3>
                   <p className="text-indigo-100 text-sm">Our algorithm found 3 market alternatives that offer <span className="text-orange-400 font-bold">full flood coverage</span> for a similar premium.</p>
                 </div>
-                <button className="bg-white text-brand-indigo font-bold px-6 py-3 rounded-xl hover:bg-gray-50 transition w-full md:w-auto text-sm shrink-0 shadow-lg">
+                <button 
+                  onClick={() => navigate('/coverage')}
+                  className="bg-white text-brand-indigo font-bold px-6 py-3 rounded-xl hover:bg-gray-50 transition-all w-full md:w-auto text-sm shrink-0 shadow-lg hover:scale-105 active:scale-95"
+                >
                   COMPARE NOW
                 </button>
               </div>

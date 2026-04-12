@@ -107,7 +107,7 @@ function ClaimsList({ setView }) {
              <p className="text-sm text-gray-500 leading-relaxed mb-8">Our guided process helps you file a claim in under 5 minutes. Snap photos, add details, and we'll handle the rest.</p>
              <button 
                onClick={() => setView('new')}
-               className="w-full bg-brand-blue hover:bg-brand-indigo text-white font-bold py-4 rounded-xl transition-colors shadow-lg shadow-brand-blue/20"
+               className="w-full bg-brand-blue hover:bg-brand-indigo text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-brand-blue/20 hover:scale-105 active:scale-95"
              >
                FILE A NEW CLAIM
              </button>
@@ -244,7 +244,7 @@ function NewClaimWizard({ setView }) {
 
           <div className="flex items-center justify-between pt-4 border-t border-gray-100">
             <button onClick={() => setView('list')} className="text-brand-blue font-bold text-sm">Previous Step</button>
-            <button className="bg-brand-blue hover:bg-brand-indigo text-white font-bold py-3 px-8 rounded-xl flex items-center gap-2 transition-colors shadow-lg shadow-brand-blue/20">
+            <button className="bg-brand-blue hover:bg-brand-indigo text-white font-bold py-3 px-8 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-brand-blue/20 hover:scale-105 active:scale-95">
               Continue to Evidence <ChevronRight className="w-4 h-4" />
             </button>
           </div>

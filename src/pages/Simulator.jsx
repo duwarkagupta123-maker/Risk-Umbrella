@@ -105,7 +105,7 @@ export default function Simulator() {
 
              <button 
                onClick={handleSimulate}
-               className="w-full bg-brand-indigo hover:bg-brand-blue text-white font-bold py-4 rounded-xl transition-colors shadow-lg mt-4 flex items-center justify-center gap-2"
+               className="w-full bg-brand-indigo hover:bg-brand-blue text-white font-bold py-4 rounded-xl transition-all shadow-lg mt-4 flex items-center justify-center gap-2 hover:scale-105 active:scale-95"
              >
                SIMULATE IMPACT
              </button>
@@ -177,7 +177,7 @@ export default function Simulator() {
                   <button className="flex-1 py-4 flex items-center justify-center gap-2 text-sm font-bold text-gray-600 hover:text-brand-blue transition-colors">
                     <Share2 className="w-4 h-4" /> SHARE RESULTS
                   </button>
-                  <button className="flex-1 bg-[#92400e] hover:bg-[#78350f] text-white py-4 rounded-full text-sm font-bold shadow-lg transition-colors">
+                  <button className="flex-1 bg-[#92400e] hover:bg-[#78350f] text-white py-4 rounded-full text-sm font-bold shadow-lg transition-all hover:scale-105 active:scale-95">
                     UPDATE MY POLICY
                   </button>
                 </div>

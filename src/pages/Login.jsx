@@ -81,7 +81,7 @@ export default function Login() {
           </div>
 
           <div className="space-y-4 pt-2">
-            <button type="submit" className="w-full bg-brand-blue hover:bg-brand-indigo text-white font-semibold py-3 rounded-xl transition-colors shadow-lg shadow-brand-blue/30">
+            <button type="submit" className="w-full bg-brand-blue hover:bg-brand-indigo text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-brand-blue/30 hover:scale-105 active:scale-95">
               Sign In
             </button>
             
@@ -91,7 +91,7 @@ export default function Login() {
               <div className="flex-grow border-t border-gray-200"></div>
             </div>
 
-            <button type="button" className="w-full bg-gray-100 hover:bg-gray-200 text-brand-blue font-semibold py-3 rounded-xl transition-colors">
+            <button type="button" className="w-full bg-gray-100 hover:bg-gray-200 text-brand-blue font-semibold py-3 rounded-xl transition-all hover:scale-105 active:scale-95">
               Create Account
             </button>
           </div>
