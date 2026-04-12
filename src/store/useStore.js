@@ -28,10 +28,44 @@ export const useStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       const data = await api.getUserPolicies();
-      // data = { policies: [...] }
       set({ policies: data.policies || [], loading: false });
     } catch (err) {
       set({ error: err.message, loading: false });
+    }
+  },
+
+  createPolicy: async (policyData) => {
+    set({ loading: true, error: null });
+    try {
+      await api.createPolicy(policyData);
+      const data = await api.getUserPolicies();
+      set({ policies: data.policies || [], loading: false });
+      return true;
+    } catch (err) {
+      set({ error: err.message, loading: false });
+      return false;
+    }
+  },
+
+  seedMockData: async () => {
+    set({ loading: true, error: null });
+    try {
+      const mocks = [
+        { type: 'home', name: 'Grand Oak Residence', coverageAmount: 15000000, premium: 12500, exclusions: ['Earthquake', 'War'], status: 'active' },
+        { type: 'car', name: 'Tesla Model S Shield', coverageAmount: 8500000, premium: 4200, exclusions: ['Racing incidents'], status: 'active' },
+        { type: 'life', name: 'Premium Term Life', coverageAmount: 20000000, premium: 3800, exclusions: [], status: 'active' }
+      ];
+      
+      for (const mock of mocks) {
+        await api.createPolicy(mock);
+      }
+      
+      const data = await api.getUserPolicies();
+      set({ policies: data.policies || [], loading: false, healthScore: 92 });
+      return true;
+    } catch (err) {
+      set({ error: err.message, loading: false });
+      return false;
     }
   },
 

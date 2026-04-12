@@ -7,6 +7,7 @@ import Coverage from './pages/Coverage'
 import Simulator from './pages/Simulator'
 import Claims from './pages/Claims'
 import Login from './pages/Login'
+import Profile from './pages/Profile'
 
 function ProtectedRoute({ children }) {
   const isLoggedIn = useStore((state) => state.isLoggedIn)
@@ -35,6 +36,7 @@ function App() {
                     <Route path="/coverage" element={<Coverage />} />
                     <Route path="/simulator" element={<Simulator />} />
                     <Route path="/claims" element={<Claims />} />
+                    <Route path="/profile" element={<Profile />} />
                     <Route path="*" element={<Navigate to="/dashboard" replace />} />
                   </Routes>
                 </main>

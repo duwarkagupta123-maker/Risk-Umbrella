@@ -76,7 +76,10 @@ export default function Navbar() {
                   <div className="px-4 py-2 border-b border-gray-50 mb-1 sm:hidden">
                      <div className="text-sm font-bold text-gray-900">{userName}</div>
                   </div>
-                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-blue flex items-center gap-2 transition-colors">
+                  <button 
+                    onClick={() => { navigate('/profile'); setShowProfile(false); }}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-blue flex items-center gap-2 transition-colors"
+                  >
                     <User className="w-4 h-4" /> My Profile
                   </button>
                   <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-blue flex items-center gap-2 transition-colors">
