@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Car, Home, ShieldCheck, Plus, Calendar, Clock, MapPin, Download, ChevronRight, User } from 'lucide-react'
+import { Car, Home, ShieldCheck, Plus, Calendar, Clock, MapPin, Download, ChevronRight, User, CheckCircle2 } from 'lucide-react'
 
 export default function Claims() {
   const [view, setView] = useState('list') // 'list' | 'new'
@@ -243,9 +243,9 @@ function NewClaimWizard({ setView }) {
           </div>
 
           <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-            <button onClick={() => setView('list')} className="text-brand-blue font-bold text-sm">Previous Step</button>
-            <button className="bg-brand-blue hover:bg-brand-indigo text-white font-bold py-3 px-8 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-brand-blue/20 hover:scale-105 active:scale-95">
-              Continue to Evidence <ChevronRight className="w-4 h-4" />
+            <button onClick={() => setView('list')} className="text-brand-blue font-bold text-sm">Cancel</button>
+            <button onClick={() => { alert('Success! Your claim document has been filed. An investigator will review it within 24 hours.'); setView('list'); }} className="bg-brand-blue hover:bg-brand-indigo text-white font-bold py-3 px-8 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-brand-blue/20 hover:scale-105 active:scale-95">
+              Submit Claim <CheckCircle2 className="w-4 h-4 ml-1" />
             </button>
           </div>
         </div>

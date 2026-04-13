@@ -31,7 +31,7 @@ export default function AIAdvisor() {
       setMessages(prev => [...prev, {
         id: Date.now(),
         type: 'bot',
-        text: "Based on my analysis, adding a comprehensive rider to your car policy would cover 98% of typical urban damages. Would you like me to simulate that?"
+        text: "Based on my analysis, your current policies are active. However, please note that future circumstances—such as undeclared modifications to your car, or unnotified property expansions—can trigger exclusions and completely stop your claim from being paid out. Always keep your exact circumstances updated to ensure full coverage!"
       }]);
     }, 1500);
   };

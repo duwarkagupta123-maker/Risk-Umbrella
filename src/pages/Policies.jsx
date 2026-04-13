@@ -200,7 +200,7 @@ export default function Policies() {
                   </div>
 
                   <div className="mt-12 mb-2">
-                    <button className="w-full bg-white hover:bg-gray-50 text-brand-blue font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                    <button onClick={() => alert(`Downloading comprehensive policy framework for ${selectedPolicy.name}...`)} className="w-full bg-white hover:bg-gray-50 text-brand-blue font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]">
                       View Full Policy PDF <FileText className="w-5 h-5" />
                     </button>
                   </div>
