@@ -8,6 +8,7 @@ import Simulator from './pages/Simulator'
 import Claims from './pages/Claims'
 import Login from './pages/Login'
 import Profile from './pages/Profile'
+import AIAdvisor from './components/AIAdvisor'
 
 function ProtectedRoute({ children }) {
   const isLoggedIn = useStore((state) => state.isLoggedIn)
@@ -40,6 +41,7 @@ function App() {
                     <Route path="*" element={<Navigate to="/dashboard" replace />} />
                   </Routes>
                 </main>
+                <AIAdvisor />
               </ProtectedRoute>
             }
           />

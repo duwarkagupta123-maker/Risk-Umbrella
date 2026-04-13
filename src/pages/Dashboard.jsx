@@ -5,6 +5,7 @@ import { useStore } from '../store/useStore'
 import { useNavigate } from 'react-router-dom'
 import AddPolicyModal from '../components/AddPolicyModal'
 import FileUploader from '../components/FileUploader'
+import RadarChart from '../components/RadarChart'
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -36,6 +37,15 @@ export default function Dashboard() {
   const totalMonthlyPremium = policies.reduce((acc, p) => acc + (p.premium || 0), 0)
   const totalCoverage = policies.reduce((acc, p) => acc + (p.coverageAmount || 0), 0)
   const hasGaps = policies.some(p => p.exclusions && p.exclusions.length > 0) || policies.length < 3
+
+  // AI Radar Data
+  const radarData = [
+    { label: 'Life', value: policies.some(p => p.type === 'life') ? 95 : 20 },
+    { label: 'Health', value: policies.some(p => p.type === 'health') ? 85 : 30 },
+    { label: 'Property', value: policies.some(p => p.type === 'home' || p.type === 'property') ? 90 : 15 },
+    { label: 'Auto', value: policies.some(p => p.type === 'car') ? 80 : 10 },
+    { label: 'Income', value: policies.some(p => p.type === 'income') ? 70 : 5 },
+  ];
 
   return (
     <div className="space-y-6">
@@ -119,34 +129,40 @@ export default function Dashboard() {
         {/* Right side layout */}
         <div className="lg:col-span-2 flex flex-col space-y-6">
           
-          {/* Coverage Visualization */}
-          <div className="glass rounded-3xl p-6 relative overflow-hidden flex-grow flex items-center justify-center border border-white/60">
-            <h2 className="absolute top-6 left-6 text-xl font-bold text-brand-blue z-10">Coverage Visualization<br/><span className="text-sm font-normal text-gray-500">The Visual Umbrella Blueprint</span></h2>
-            
-            <div className="relative w-72 h-72 rounded-full border-2 border-dashed border-gray-300 mt-12 flex items-center justify-center">
-              {/* Umbrella Canvas SVG representation */}
-              <div className={`absolute inset-x-0 bottom-1/2 w-full h-1/2 rounded-t-full drop-shadow-xl overflow-hidden clip-umbrella transition-colors duration-700 ${policies.length > 0 ? 'bg-brand-blue/90' : 'bg-gray-200'}`}>
-                {/* Divide into sections */}
-                <div className="absolute w-px h-full bg-white/20 left-1/3 bottom-0 origin-bottom transform -rotate-45"></div>
-                <div className="absolute w-px h-full bg-white/20 left-2/3 bottom-0 origin-bottom transform rotate-45"></div>
-              </div>
-              {/* Umbrella Handle */}
-              <div className="absolute top-1/2 w-2 h-20 bg-gray-700 right-[calc(50%-4px)] rounded-b-md"></div>
-              <div className="absolute top-[calc(50%+80px)] w-6 h-6 border-4 border-t-0 border-gray-700 rounded-b-full right-[calc(50%-12px)]"></div>
-              
-              {/* Labels */}
-              <span className={`absolute top-1/4 left-1/4 font-bold text-sm tracking-widest drop-shadow-md ${policies.some(p => p.type === 'life') ? 'text-white' : 'text-gray-400'}`}>Life</span>
-              <span className={`absolute top-1/4 right-1/4 font-bold text-sm tracking-widest drop-shadow-md ${policies.some(p => p.type === 'health') ? 'text-white' : 'text-gray-400'}`}>Health</span>
-              <span className={`absolute bottom-1/4 left-6 font-bold text-sm tracking-widest drop-shadow-md ${policies.some(p => p.type === 'income') ? 'text-white' : 'text-gray-300'}`}>Income</span>
-              <span className={`absolute bottom-1/4 right-6 font-bold text-sm tracking-widest drop-shadow-md ${policies.some(p => p.type === 'property' || p.type === 'home') ? 'text-white' : 'text-gray-300'}`}>Property</span>
-            </div>
+          {/* Dynamic Radar Visualization & AI Insights */}
+          <div className="glass rounded-3xl p-6 relative overflow-hidden flex-grow flex flex-col md:flex-row gap-6 border border-white/60 min-h-[400px]">
+             {/* Left side: Text & Insights */}
+             <div className="flex-1 flex flex-col z-10">
+                <h2 className="text-xl font-bold text-brand-blue mb-1">Dynamic Risk Radar</h2>
+                <span className="text-sm font-normal text-gray-500 mb-6">AI-Generated Portfolio Mapping</span>
+                
+                {/* Smart Market Insights News Ticker/List */}
+                <div className="mt-auto bg-gray-50/80 rounded-2xl p-4 border border-gray-100">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Live AI Insights</span>
+                  </div>
+                  <div className="space-y-3">
+                    <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="text-xs text-gray-700 bg-white p-2 rounded-xl shadow-sm border border-gray-100">
+                      <strong className="text-brand-blue">Trending:</strong> 84% of your peers added Earthquake riders this month.
+                    </motion.div>
+                    <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.4 }} className="text-xs text-gray-700 bg-white p-2 rounded-xl shadow-sm border border-gray-100">
+                      <strong className="text-brand-indigo">Optimization:</strong> Bundle Property & Auto to save ₹4,500/yr.
+                    </motion.div>
+                  </div>
+                </div>
+             </div>
 
-            {/* Overall Protection Status */}
-            <div className={`absolute bottom-6 left-1/2 -translate-x-1/2 bg-white px-8 py-4 rounded-2xl shadow-xl shadow-brand-blue/5 text-center border ${hasGaps ? 'border-red-100' : 'border-green-100'}`}>
-               <div className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${hasGaps ? 'text-red-500' : 'text-green-500'}`}>Protection Status</div>
-               <div className={`font-bold mb-1 ${hasGaps ? 'text-red-700' : 'text-green-700'}`}>{hasGaps ? 'Umbrella Breach Detected' : 'Umbrella Fully Intact'}</div>
-               <div className="text-xs text-gray-500">{hasGaps ? 'Add natural disaster riders to seal the leaks.' : 'Your portfolio is optimally balanced.'}</div>
-            </div>
+             {/* Right side: Radar Chart */}
+             <div className="flex-1 flex items-center justify-center relative w-full h-[300px] md:h-auto z-10">
+                <RadarChart data={radarData} />
+                
+                {/* Overall Protection Status overlapping */}
+                <div className={`absolute -bottom-2 md:bottom-2 left-1/2 -translate-x-1/2 bg-white px-6 py-3 rounded-2xl shadow-xl shadow-brand-blue/5 text-center border ${hasGaps ? 'border-red-100' : 'border-green-100'} whitespace-nowrap hidden sm:block`}>
+                  <div className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${hasGaps ? 'text-red-500' : 'text-green-500'}`}>AI Health Status</div>
+                  <div className={`font-bold text-sm ${hasGaps ? 'text-red-700' : 'text-green-700'}`}>{hasGaps ? 'Vulnerabilities Found' : 'Optimally Balanced'}</div>
+                </div>
+             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -170,34 +186,44 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Health Score widget */}
-            <div className="glass rounded-3xl p-6 flex flex-col justify-center h-[160px]">
-              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Health Score</span>
-              <div className="flex justify-between items-end">
-                <div>
-                  <h3 className="text-5xl font-extrabold text-brand-blue">{healthScore < 80 ? 'Good' : 'Excellent'}</h3>
-                  <p className="text-sm text-gray-500 mt-2">Active shields: {policies.length}</p>
-                </div>
-                <div className="w-20 h-20 rounded-full border-[6px] border-orange-500 border-t-orange-100 flex items-center justify-center text-xl font-bold text-brand-blue transform rotate-45">
-                   <span className="-rotate-45">{healthScore}%</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+              {/* Health Score widget */}
+              <div className="glass rounded-3xl p-6 flex flex-col justify-center h-[180px]">
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Health Score</span>
+                <div className="flex justify-between items-end">
+                  <div>
+                    <h3 className="text-5xl font-extrabold text-brand-blue">{healthScore < 80 ? 'Good' : 'Excellent'}</h3>
+                    <p className="text-sm text-gray-500 mt-2">Active shields: {policies.length}</p>
+                  </div>
+                  <div className="w-20 h-20 rounded-full border-[6px] border-orange-500 border-t-orange-100 flex items-center justify-center text-xl font-bold text-brand-blue transform rotate-45">
+                     <span className="-rotate-45">{healthScore}%</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Monthly Premium widget */}
-            <div className="glass rounded-3xl p-6 flex flex-col justify-center h-[160px]">
-               <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Monthly Premium</span>
-               <div className="flex justify-between items-end">
-                 <div>
-                   <h3 className="text-4xl font-extrabold text-brand-blue">₹{totalMonthlyPremium.toLocaleString()}<span className="text-xl text-gray-400 font-normal">/mo</span></h3>
-                   <p className="text-sm font-medium text-gray-600 mt-2">Total coverage: ₹{(totalCoverage / 100000).toFixed(1)}L</p>
-                 </div>
-                 <div className="bg-orange-100 p-3 rounded-xl">
-                   <div className="w-6 h-4 bg-orange-500 rounded flex items-center justify-center relative">
-                      <div className="w-2 h-2 rounded-full bg-white"></div>
+              {/* Monthly Premium & Stress Test widget */}
+              <div className="glass rounded-3xl p-6 flex flex-col justify-between h-[180px]">
+                 <div className="flex justify-between items-start">
+                   <div>
+                     <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">Monthly Premium</span>
+                     <h3 className="text-3xl font-extrabold text-brand-blue">₹{totalMonthlyPremium.toLocaleString()}<span className="text-sm text-gray-400 font-normal">/mo</span></h3>
+                   </div>
+                   <div className="bg-orange-100 p-2 rounded-xl scale-75 origin-top-right">
+                     <div className="w-6 h-4 bg-orange-500 rounded flex items-center justify-center relative">
+                        <div className="w-2 h-2 rounded-full bg-white"></div>
+                     </div>
                    </div>
                  </div>
-               </div>
+
+                 {/* Interactive Sliders (Mini Simulator) */}
+                 <div className="mt-4 border-t border-gray-100 pt-3">
+                   <div className="flex justify-between text-[10px] font-bold text-gray-500 uppercase mb-2">
+                     <span>Stress Test Simulator</span>
+                     <span className="text-brand-blue">Adjust Risk</span>
+                   </div>
+                   <input type="range" className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-blue" defaultValue="30" />
+                 </div>
+              </div>
             </div>
 
           </div>
