@@ -53,94 +53,86 @@ export const api = {
 
   /** GET /api/user/me  →  { user } */
   getMe: async () => {
-    const user = JSON.parse(localStorage.getItem('ru_user') || 'null');
-    return { user: user || { name: 'Demo User', email: 'demo@example.com' } };
+    const res = await fetch(`${API_BASE_URL}/user/me`, {
+      headers: authHeaders(),
+    });
+    return handleResponse(res);
   },
 
-  // ── Policies (MOCKED) ─────────────────────────────────────────────────────
+  // ── Policies ──────────────────────────────────────────────────────────────
 
   /** GET /api/policies  →  [ ...policies ] */
   getUserPolicies: async () => {
-    return { policies: mockPolicies };
+    const res = await fetch(`${API_BASE_URL}/policies`, {
+      headers: authHeaders(),
+    });
+    return handleResponse(res);
   },
 
   /** POST /api/policies  →  createdPolicy */
   createPolicy: async (policyData) => {
-    const newPolicy = {
-      ...policyData,
-      _id: Math.random().toString(36).substring(2, 9),
-      status: 'active'
-    };
-    mockPolicies.push(newPolicy);
-    return newPolicy;
+    const res = await fetch(`${API_BASE_URL}/policies`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify(policyData),
+    });
+    return handleResponse(res);
   },
 
   /** PUT /api/policies/:id  →  updatedPolicy */
   updatePolicy: async (id, policyData) => {
-    const idx = mockPolicies.findIndex(p => p._id === id);
-    if (idx >= 0) {
-      mockPolicies[idx] = { ...mockPolicies[idx], ...policyData };
-      return mockPolicies[idx];
-    }
-    throw new Error('Policy not found');
+    const res = await fetch(`${API_BASE_URL}/policies/${id}`, {
+      method: 'PUT',
+      headers: authHeaders(),
+      body: JSON.stringify(policyData),
+    });
+    return handleResponse(res);
   },
 
   /** DELETE /api/policies/:id  →  { message } */
   deletePolicy: async (id) => {
-    mockPolicies = mockPolicies.filter(p => p._id !== id);
-    return { message: 'Deleted successfully' };
+    const res = await fetch(`${API_BASE_URL}/policies/${id}`, {
+      method: 'DELETE',
+      headers: authHeaders(),
+    });
+    return handleResponse(res);
   },
 
-  // ── Risk (MOCKED) ─────────────────────────────────────────────────────────
+  // ── Risk ──────────────────────────────────────────────────────────────────
 
   /** GET /api/risk  →  risk analysis data */
   getRiskAnalysis: async () => {
-    return {
-      healthScore: 78,
-      gaps: [
-        { id: 'g1', type: 'flood', description: 'No Flood Coverage', patched: false }
-      ]
-    };
+    const res = await fetch(`${API_BASE_URL}/risk`, {
+      headers: authHeaders(),
+    });
+    return handleResponse(res);
   },
 
-  // ── Simulate (MOCKED) ─────────────────────────────────────────────────────
+  // ── Simulate ──────────────────────────────────────────────────────────────
 
+  /**
+   * POST /api/simulate
+   * Body: { homeValue, carValue, income, dependents, generalEvent, lifeEvent }
+   * →  simulation results
+   */
   runSimulation: async (simulationData) => {
-    return {
-      impact: 500000,
-      covered: 400000,
-      gap: 100000,
-      message: 'Simulation completed based on mock data.'
-    };
+    const res = await fetch(`${API_BASE_URL}/simulate`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify(simulationData),
+    });
+    return handleResponse(res);
   },
 
-  // ── Claims (MOCKED) ───────────────────────────────────────────────────────
-
-  /** GET /api/claims → { claims } */
-  getClaims: async () => {
-    return { claims: mockClaims };
-  },
+  // ── Claims ────────────────────────────────────────────────────────────────
 
   /** POST /api/claims  →  { success, claimId } */
   submitClaim: async (claimData) => {
-    const newClaim = {
-      ...claimData,
-      id: 'CLM-' + Math.random().toString(36).substring(2, 8).toUpperCase(),
-      status: 'Under Review',
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-    };
-    mockClaims.unshift(newClaim);
-    return { success: true, claimId: newClaim.id, claim: newClaim };
+    const res = await fetch(`${API_BASE_URL}/claims`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify(claimData),
+    });
+    return handleResponse(res);
   },
 };
-
-// Local state for mocks
-let mockPolicies = [
-  { _id: 'mock1', type: 'home', name: 'Grand Oak Residence', coverageAmount: 15000000, premium: 12500, exclusions: ['Earthquake', 'War'], status: 'active' },
-  { _id: 'mock2', type: 'car', name: 'Tesla Model S Shield', coverageAmount: 8500000, premium: 4200, exclusions: ['Racing incidents'], status: 'active' },
-  { _id: 'mock3', type: 'life', name: 'Premium Term Life', coverageAmount: 20000000, premium: 3800, exclusions: [], status: 'active' }
-];
-
-export let mockClaims = [
-  { id: 'CLM-902341-B', title: 'Car Accident', date: 'Oct 12, 2024', status: 'Under Review', amount: 'Pending', icon: 'Car' }
-];

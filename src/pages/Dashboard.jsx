@@ -3,21 +3,24 @@ import { motion } from 'framer-motion'
 import { AlertCircle, FileText, CheckCircle2, ShieldAlert, Umbrella, Loader2 } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { useNavigate } from 'react-router-dom'
+import AddPolicyModal from '../components/AddPolicyModal'
+import FileUploader from '../components/FileUploader'
 
 export default function Dashboard() {
   const navigate = useNavigate()
   const { user, policies, healthScore, gaps, fetchPolicies, loading } = useStore()
   const userName = user?.name || 'there'
   
-  const [jargonInput, setJargonInput] = useState('')
+  const [selectedFile, setSelectedFile] = useState(null)
   const [translation, setTranslation] = useState(null)
+  const [isAddPolicyModalOpen, setIsAddPolicyModalOpen] = useState(false)
 
   useEffect(() => {
     fetchPolicies()
   }, [fetchPolicies])
 
   const handleTranslate = () => {
-    if (!jargonInput) return;
+    if (!selectedFile) return;
     setTranslation({
       risks: [
         { id: 1, type: 'FLOOD EXCLUSION', desc: 'You are responsible for 100% of costs in a flood event. Estimated risk: ₹45L+.', action: 'Critical' },
@@ -36,6 +39,8 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
+      <AddPolicyModal isOpen={isAddPolicyModalOpen} onClose={() => setIsAddPolicyModalOpen(false)} />
+
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-4xl font-extrabold text-brand-textDark tracking-tight mb-2">Hello, {userName}</h1>
@@ -44,11 +49,16 @@ export default function Dashboard() {
             {policies.length === 0 ? " You haven't added any policies yet." : ` We've identified ${hasGaps ? 'critical gaps' : 'some areas to optimize'} in your coverage.`}
           </p>
         </div>
-        {loading && (
-          <div className="flex items-center gap-2 text-brand-blue font-medium text-sm bg-blue-50 px-4 py-2 rounded-full border border-blue-100 italic">
-            <Loader2 className="w-4 h-4 animate-spin" /> Updating shields...
-          </div>
-        )}
+        <div className="flex items-center gap-4">
+          {loading && (
+            <div className="flex items-center gap-2 text-brand-blue font-medium text-sm bg-blue-50 px-4 py-2 rounded-full border border-blue-100 italic">
+              <Loader2 className="w-4 h-4 animate-spin" /> Updating shields...
+            </div>
+          )}
+          <button onClick={() => setIsAddPolicyModalOpen(true)} className="bg-brand-blue hover:bg-brand-indigo text-white font-bold py-3 px-6 rounded-xl transition-all shadow-md shadow-brand-blue/20 hover:scale-105 active:scale-95 whitespace-nowrap text-sm flex items-center gap-2 shrink-0">
+            <span className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center">+</span> Add Policy
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -61,14 +71,14 @@ export default function Dashboard() {
             </div>
             <h2 className="text-xl font-bold text-brand-blue">Policy Decoder</h2>
           </div>
-          <p className="text-sm text-gray-600 mb-4">Paste complex policy jargon below to reveal coverage limits in simple terms.</p>
+          <p className="text-sm text-gray-600 mb-4">Upload a policy document to reveal coverage limits in simple terms.</p>
           
-          <textarea 
-            value={jargonInput}
-            onChange={(e) => setJargonInput(e.target.value)}
-            className="w-full bg-white p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-blue/20 outline-none resize-none h-32 mb-4 text-sm"
-            placeholder="Paste your policy text here... (e.g., 'Section 4.2: Indemnity shall be limited to...')"
-          />
+          <div className="mb-4">
+            <FileUploader onFileSelected={(file) => {
+              setSelectedFile(file)
+              setTranslation(null)
+            }} />
+          </div>
           <button onClick={handleTranslate} className="w-full bg-brand-blue hover:bg-brand-indigo text-white font-semibold py-3 rounded-xl transition-all text-sm mb-6 shadow-md shadow-brand-blue/20 hover:scale-105 active:scale-95">
             TRANSLATE POLICY
           </button>
