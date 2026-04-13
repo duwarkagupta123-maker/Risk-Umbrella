@@ -20,15 +20,19 @@ export const useStore = create((set, get) => ({
   },
 
   // ── Policies ──────────────────────────────────────────────────────────────
-  policies: [],
+  policies: [
+    { _id: 'mock_home_01', type: 'home', name: 'Grand Oak Residence Protect', coverageAmount: 15000000, premium: 12500, exclusions: ['Earthquake', 'War'], status: 'active' },
+    { _id: 'mock_car_01', type: 'car', name: 'Tesla Model S Shield', coverageAmount: 8500000, premium: 4200, exclusions: ['Racing incidents'], status: 'active' },
+    { _id: 'mock_life_01', type: 'life', name: 'Premium Term Life', coverageAmount: 20000000, premium: 3800, exclusions: [], status: 'active' }
+  ],
   loading: false,
   error: null,
 
   fetchPolicies: async () => {
     set({ loading: true, error: null });
     try {
-      const data = await api.getUserPolicies();
-      set({ policies: data.policies || [], loading: false });
+      await new Promise(r => setTimeout(r, 600)); // simulate network delay
+      set((state) => ({ loading: false }));
     } catch (err) {
       set({ error: err.message, loading: false });
     }
@@ -37,9 +41,16 @@ export const useStore = create((set, get) => ({
   createPolicy: async (policyData) => {
     set({ loading: true, error: null });
     try {
-      await api.createPolicy(policyData);
-      const data = await api.getUserPolicies();
-      set({ policies: data.policies || [], loading: false });
+      await new Promise(r => setTimeout(r, 800)); // simulate network delay
+      const newPolicy = { 
+        ...policyData, 
+        _id: 'mock_pol_' + Math.random().toString(36).substr(2, 9),
+        status: 'active' 
+      };
+      set((state) => ({ 
+        policies: [...state.policies, newPolicy], 
+        loading: false 
+      }));
       return true;
     } catch (err) {
       set({ error: err.message, loading: false });
