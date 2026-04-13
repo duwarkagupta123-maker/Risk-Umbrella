@@ -22,14 +22,17 @@ export default function Login() {
     setError(null)
     setLoading(true)
     try {
-      let data;
-      if (mode === 'login') {
-        data = await api.login({ email, password })
-      } else {
-        data = await api.signup({ name, email, password })
-      }
-      // data = { token, user }
-      login({ token: data.token, user: data.user })
+      // Bypassing backend logic for local demo
+      const dummyUser = {
+        name: mode === 'signup' ? name : 'Demo User',
+        email: email,
+        id: 'demo-id'
+      };
+      
+      // Simulate network request delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      login({ token: 'demo-token-12345', user: dummyUser })
       navigate('/dashboard')
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.')
