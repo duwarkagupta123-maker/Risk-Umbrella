@@ -88,4 +88,29 @@ export const useStore = create((set, get) => ({
         healthScore: 100 - unpatchedCount * 12.5,
       };
     }),
+
+  // ── Claims ────────────────────────────────────────────────────────────────
+  claims: [],
+  fetchClaims: async () => {
+    set({ loading: true, error: null });
+    try {
+      const data = await api.getClaims();
+      set({ claims: data.claims || [], loading: false });
+    } catch (err) {
+      set({ error: err.message, loading: false });
+    }
+  },
+
+  submitClaim: async (claimData) => {
+    set({ loading: true, error: null });
+    try {
+      await api.submitClaim(claimData);
+      const data = await api.getClaims();
+      set({ claims: data.claims || [], loading: false });
+      return true;
+    } catch (err) {
+      set({ error: err.message, loading: false });
+      return false;
+    }
+  },
 }));

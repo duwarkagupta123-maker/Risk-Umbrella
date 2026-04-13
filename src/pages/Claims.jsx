@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { Car, Home, ShieldCheck, Plus, Calendar, Clock, MapPin, Download, ChevronRight, User } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Car, Home, ShieldCheck, Plus, Calendar, Clock, MapPin, Download, ChevronRight, User, Loader2 } from 'lucide-react'
+import { useStore } from '../store/useStore'
 
 export default function Claims() {
   const [view, setView] = useState('list') // 'list' | 'new'
@@ -8,6 +9,12 @@ export default function Claims() {
 }
 
 function ClaimsList({ setView }) {
+  const { claims, fetchClaims } = useStore()
+  
+  useEffect(() => {
+    fetchClaims()
+  }, [fetchClaims])
+
   return (
     <div className="space-y-8 relative">
       <div className="bg-brand-blue/5 rounded-3xl -mx-4 sm:-mx-8 px-4 sm:px-8 py-10 -mt-8 mb-8 border-b border-brand-blue/10 relative overflow-hidden">
@@ -118,20 +125,17 @@ function ClaimsList({ setView }) {
                Claims History <span className="text-[10px] text-gray-400 font-normal uppercase tracking-widest">(Last 12 Months)</span>
              </h3>
              <div className="space-y-3">
-               {[
-                 { id: 1, title: 'Water Damage', date: 'Sept 14, 2024', status: 'Resolved', amount: '$2,450.00', icon: Home },
-                 { id: 2, title: 'Medical Expense', date: 'June 02, 2024', status: 'Resolved', amount: '$180.00', icon: ShieldCheck }
-               ].map(claim => (
+               {claims.map(claim => (
                  <div key={claim.id} className="bg-white p-4 rounded-2xl flex items-center gap-4 border border-gray-100 shadow-sm">
                    <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center">
-                     <claim.icon className="w-4 h-4 text-gray-500" />
+                     {claim.icon === 'Car' ? <Car className="w-4 h-4 text-gray-500" /> : <Home className="w-4 h-4 text-gray-500" />}
                    </div>
                    <div className="flex-1">
                      <h4 className="text-sm font-bold text-gray-900">{claim.title}</h4>
                      <p className="text-[10px] text-gray-500 uppercase tracking-wider">{claim.date}</p>
                    </div>
                    <div className="text-right">
-                     <span className="text-xs font-bold text-green-600 block">{claim.status}</span>
+                     <span className="text-xs font-bold text-orange-600 block">{claim.status}</span>
                      <span className="text-xs text-gray-500 font-medium">{claim.amount}</span>
                    </div>
                  </div>
@@ -148,6 +152,16 @@ function ClaimsList({ setView }) {
 }
 
 function NewClaimWizard({ setView }) {
+  const { submitClaim } = useStore()
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async () => {
+    setLoading(true)
+    await submitClaim({ title: 'New Car Incident', icon: 'Car', amount: 'Est. Processing' })
+    setLoading(false)
+    setView('list')
+  }
+
   return (
     <div className="max-w-4xl mx-auto space-y-10 min-h-[80vh]">
       <div className="text-center">
@@ -243,9 +257,9 @@ function NewClaimWizard({ setView }) {
           </div>
 
           <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-            <button onClick={() => setView('list')} className="text-brand-blue font-bold text-sm">Previous Step</button>
-            <button className="bg-brand-blue hover:bg-brand-indigo text-white font-bold py-3 px-8 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-brand-blue/20 hover:scale-105 active:scale-95">
-              Continue to Evidence <ChevronRight className="w-4 h-4" />
+            <button onClick={() => setView('list')} className="text-brand-blue font-bold text-sm">Cancel</button>
+            <button disabled={loading} onClick={handleSubmit} className="bg-brand-blue hover:bg-brand-indigo text-white font-bold py-3 px-8 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-brand-blue/20 hover:scale-105 active:scale-95 disabled:opacity-50">
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Submit Claim'} <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>
