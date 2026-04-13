@@ -19,6 +19,12 @@ export default function AIAdvisor() {
     scrollToBottom();
   }, [messages, isTyping]);
 
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener('open-ai-advisor', handleOpen);
+    return () => window.removeEventListener('open-ai-advisor', handleOpen);
+  }, []);
+
   const handleSend = () => {
     if (!input.trim()) return;
     const userMsg = { id: Date.now(), type: 'user', text: input };

@@ -93,12 +93,20 @@ export default function Simulator() {
                  <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">General Event</label>
                  <select className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-brand-blue text-sm font-medium text-gray-800 appearance-none bg-white">
                    <option>House fire</option>
+                   <option>Severe Flood</option>
+                   <option>Burglary / Theft</option>
+                   <option>Major Earthquake</option>
+                   <option>Car Totaled (Accident)</option>
                  </select>
                </div>
                <div>
                  <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Life Event</label>
                  <select className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-brand-blue text-sm font-medium text-gray-800 appearance-none bg-white">
-                   <option>Disability</option>
+                   <option>Disability (Permanent)</option>
+                   <option>Disability (Temporary)</option>
+                   <option>Critical Illness diagnosis</option>
+                   <option>Loss of Primary Job</option>
+                   <option>Death of Primary Breadwinner</option>
                  </select>
                </div>
              </div>

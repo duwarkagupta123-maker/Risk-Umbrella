@@ -89,7 +89,7 @@ function ClaimsList({ setView }) {
             <div className="bg-gray-50 rounded-2xl p-6 relative overflow-hidden border border-gray-100">
                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 block">Need Help?</span>
                <h3 className="text-xl font-bold text-brand-blue mb-4">Dedicated Claims Concierge</h3>
-               <button className="text-sm font-bold text-brand-blue flex items-center hover:text-brand-indigo transition-colors group">
+               <button onClick={() => window.dispatchEvent(new Event('open-ai-advisor'))} className="text-sm font-bold text-brand-blue flex items-center hover:text-brand-indigo transition-colors group">
                  Start Live Chat <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                </button>
             </div>
@@ -251,7 +251,7 @@ function NewClaimWizard({ setView }) {
         </div>
 
         {/* Floating Chat Button */}
-        <div className="absolute right-8 bottom-28 md:bottom-8 bg-white rounded-full p-2 pr-6 flex items-center gap-3 shadow-[0_10px_40px_-10px_rgba(30,58,138,0.3)] border border-gray-100 cursor-pointer hover:scale-105 transition-transform z-20">
+        <div onClick={() => window.dispatchEvent(new Event('open-ai-advisor'))} className="absolute right-8 bottom-28 md:bottom-8 bg-white rounded-full p-2 pr-6 flex items-center gap-3 shadow-[0_10px_40px_-10px_rgba(30,58,138,0.3)] border border-gray-100 cursor-pointer hover:scale-105 transition-transform z-20">
            <div className="w-10 h-10 bg-brand-indigo rounded-full flex items-center justify-center relative">
              <User className="w-5 h-5 text-white" />
              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>

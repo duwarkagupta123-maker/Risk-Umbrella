@@ -10,13 +10,18 @@ export default function Navbar() {
   const navigate = useNavigate()
   
   const [showProfile, setShowProfile] = useState(false)
+  const [showNotif, setShowNotif] = useState(false)
   const profileRef = useRef(null)
+  const notifRef = useRef(null)
 
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setShowProfile(false)
+      }
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setShowNotif(false)
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -47,10 +52,41 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <button className="text-gray-500 hover:text-brand-blue transition relative">
-              <Bell className="w-5 h-5" />
-              <div className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white"></div>
-            </button>
+            <div className="relative" ref={notifRef}>
+              <button 
+                onClick={() => setShowNotif(!showNotif)}
+                className="text-gray-500 hover:text-brand-blue transition relative focus:outline-none"
+              >
+                <Bell className="w-5 h-5" />
+                <div className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white"></div>
+              </button>
+
+              {/* Notification Dropdown */}
+              {showNotif && (
+                <div className="absolute right-0 top-full mt-4 w-72 bg-white rounded-xl shadow-xl shadow-brand-blue/10 border border-gray-100 py-2 origin-top-right animate-in fade-in slide-in-from-top-2">
+                  <div className="px-4 py-2 border-b border-gray-50 flex justify-between items-center mb-1">
+                     <span className="text-xs font-bold text-gray-900 uppercase tracking-widest block">Notifications</span>
+                     <span className="bg-red-100 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-md">2 New</span>
+                  </div>
+                  <div className="max-h-64 overflow-y-auto">
+                    <button className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 flex flex-col gap-1 relative">
+                       <div className="w-1.5 h-1.5 bg-brand-blue rounded-full absolute left-2 top-4"></div>
+                       <span className="text-xs font-bold text-gray-900">Premium Renewed</span>
+                       <span className="text-xs text-gray-500">Your Auto policy premium payment was successful.</span>
+                    </button>
+                    <button className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 flex flex-col gap-1 relative">
+                       <div className="w-1.5 h-1.5 bg-red-500 rounded-full absolute left-2 top-4"></div>
+                       <span className="text-xs font-bold text-gray-900">Weather Alert</span>
+                       <span className="text-xs text-gray-500">High flood risk in your primary zip code next week.</span>
+                    </button>
+                  </div>
+                  <button className="w-full text-center px-4 py-2 mt-1 text-xs font-bold text-brand-blue hover:text-brand-indigo transition-colors uppercase tracking-wider">
+                    See All History
+                  </button>
+                </div>
+              )}
+            </div>
+
             <div className="flex items-center border-l border-gray-300 pl-4 relative" ref={profileRef}>
               
               <button 
