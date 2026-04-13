@@ -3,15 +3,15 @@ import { Car, Home, ShieldCheck, Plus, Calendar, Clock, MapPin, Download, Chevro
 
 export default function Claims() {
   const [view, setView] = useState('list') // 'list' | 'new'
-
   return view === 'list' ? <ClaimsList setView={setView} /> : <NewClaimWizard setView={setView} />
 }
 
 function ClaimsList({ setView }) {
+  const [showDetails, setShowDetails] = useState(false);
+
   return (
     <div className="space-y-8 relative">
       <div className="bg-brand-blue/5 rounded-3xl -mx-4 sm:-mx-8 px-4 sm:px-8 py-10 -mt-8 mb-8 border-b border-brand-blue/10 relative overflow-hidden">
-        {/* Glow orb */}
         <div className="absolute right-0 top-0 w-96 h-96 bg-brand-blue/10 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/3"></div>
         <div className="relative z-10 flex justify-between items-center max-w-5xl">
           <div>
@@ -21,7 +21,6 @@ function ClaimsList({ setView }) {
             </div>
           </div>
           <div className="hidden md:block w-32 h-32 bg-gray-900 rounded-xl overflow-hidden relative shadow-2xl transform rotate-3">
-            {/* Abstract 3D glass ring placeholder image */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-300/30 to-orange-500/30"></div>
             <div className="absolute inset-4 rounded-full border-4 border-white/40 shadow-[0_0_20px_rgba(255,255,255,0.5)] flex items-center justify-center">
               <div className="w-12 h-6 border-y-4 border-orange-400 rotate-45 rounded"></div>
@@ -37,7 +36,6 @@ function ClaimsList({ setView }) {
              <span className="text-xs text-gray-500 font-medium">Updated 2 mins ago</span>
           </div>
           
-          {/* Active Claim Card */}
           <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
               <div className="flex items-center gap-4">
@@ -54,7 +52,7 @@ function ClaimsList({ setView }) {
               </div>
               <div className="flex flex-col items-end gap-3 w-full sm:w-auto">
                 <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded text-[10px] font-bold uppercase tracking-wider whitespace-nowrap">Under Review</span>
-                <button className="bg-brand-blue hover:bg-brand-indigo text-white font-bold px-6 py-2 rounded-xl text-sm transition-colors w-full sm:w-auto shadow-md">
+                <button onClick={() => setShowDetails(true)} className="bg-brand-blue hover:bg-brand-indigo text-white font-bold px-6 py-2 rounded-xl text-sm transition-colors w-full sm:w-auto shadow-md">
                   VIEW DETAILS
                 </button>
               </div>
@@ -72,7 +70,6 @@ function ClaimsList({ setView }) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Policy Status Box */}
             <div className="bg-brand-indigo rounded-2xl p-6 text-white relative overflow-hidden shadow-lg border border-brand-blue shadow-brand-blue/20">
                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4">
                  <Umbrella className="w-32 h-32" />
@@ -85,7 +82,6 @@ function ClaimsList({ setView }) {
                </div>
             </div>
 
-            {/* Need Help Box */}
             <div className="bg-gray-50 rounded-2xl p-6 relative overflow-hidden border border-gray-100">
                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 block">Need Help?</span>
                <h3 className="text-xl font-bold text-brand-blue mb-4">Dedicated Claims Concierge</h3>
@@ -97,7 +93,6 @@ function ClaimsList({ setView }) {
         </div>
 
         <div className="space-y-6">
-          {/* New Incident Widget */}
           <div className="bg-white rounded-[2rem] p-8 shadow-2xl shadow-brand-blue/5 border border-gray-50 relative overflow-hidden">
              <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-bl-full -z-10"></div>
              <div className="w-10 h-10 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center mb-6">
@@ -143,6 +138,31 @@ function ClaimsList({ setView }) {
           </div>
         </div>
       </div>
+
+      {showDetails && (
+        <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="bg-white rounded-[2rem] p-8 w-full max-w-lg relative shadow-2xl animate-in zoom-in-95 fade-in duration-200">
+            <h3 className="text-2xl font-bold text-brand-blue mb-6">Claim Details</h3>
+            <div className="space-y-4">
+               <div className="bg-gray-50 rounded-xl p-4 flex justify-between border border-gray-100">
+                 <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">Claim ID</span>
+                 <span className="text-sm font-bold text-gray-900"># CLM-902341-B</span>
+               </div>
+               <div className="bg-gray-50 rounded-xl p-4 flex justify-between border border-gray-100">
+                 <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">Incident</span>
+                 <span className="text-sm font-bold text-gray-900">Car Accident</span>
+               </div>
+               <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                 <span className="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-2">Description / Status</span>
+                 <p className="text-sm text-gray-700 leading-relaxed">Minor bumper damage at a busy intersection. No injuries reported. The vehicle is currently awaiting an assessment report from an affiliated local garage to finalize the repair estimates.</p>
+               </div>
+            </div>
+            <button onClick={() => setShowDetails(false)} className="w-full mt-8 bg-brand-indigo hover:bg-brand-blue text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:scale-[1.02] active:scale-[0.98]">
+              Close Overview
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -164,19 +184,17 @@ function NewClaimWizard({ setView }) {
             { step: 3, label: 'Evidence', active: false, done: false },
             { step: 4, label: 'Review', active: false, done: false },
           ].map(s => (
-            <div key={s.step} className="flex flex-col items-center gap-3">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors ${s.done ? 'bg-brand-blue text-white' : s.active ? 'bg-brand-indigo text-white shadow-lg ring-4 ring-indigo-50 border border-white' : 'bg-gray-100 text-gray-400 border border-gray-200'}`}>
-                {s.done ? <CheckCircle2 className="w-5 h-5" /> : s.step}
-              </div>
-              <span className={`text-[10px] font-bold uppercase tracking-widest ${s.active ? 'text-brand-indigo' : 'text-gray-400'}`}>{s.label}</span>
-            </div>
+             <div key={s.step} className="flex flex-col items-center gap-3">
+               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors ${s.done ? 'bg-brand-blue text-white' : s.active ? 'bg-brand-indigo text-white shadow-lg ring-4 ring-indigo-50 border border-white' : 'bg-gray-100 text-gray-400 border border-gray-200'}`}>
+                 {s.done ? <CheckCircle2 className="w-5 h-5" /> : s.step}
+               </div>
+               <span className={`text-[10px] font-bold uppercase tracking-widest ${s.active ? 'text-brand-indigo' : 'text-gray-400'}`}>{s.label}</span>
+             </div>
           ))}
         </div>
       </div>
 
       <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl shadow-brand-blue/5 border border-gray-50 flex flex-col md:flex-row gap-12 relative overflow-hidden">
-        
-        {/* Left Side: context */}
         <div className="w-full md:w-1/3 space-y-6">
           <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
             <h4 className="text-sm font-bold text-brand-blue mb-4">Incident Selection</h4>
@@ -190,16 +208,13 @@ function NewClaimWizard({ setView }) {
               </div>
             </div>
           </div>
-
           <div className="w-full h-40 bg-gray-200 rounded-2xl overflow-hidden relative shadow-inner grayscale contrast-125">
-            {/* Mock image container for dashboard / car */}
             <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-800 to-gray-700 flex items-center justify-center">
                <Car className="w-16 h-16 text-white/10" />
             </div>
           </div>
         </div>
 
-        {/* Right Side: form */}
         <div className="w-full md:w-2/3 space-y-8">
           <div>
             <h3 className="text-2xl font-bold text-brand-blue mb-1">Incident Details</h3>

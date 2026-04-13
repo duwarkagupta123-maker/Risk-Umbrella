@@ -14,6 +14,7 @@ export default function Policies() {
   const { policies, loading, error, fetchPolicies } = useStore()
   const [selectedPolicyId, setSelectedPolicyId] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [showPdfOptions, setShowPdfOptions] = useState(false)
 
   useEffect(() => {
     fetchPolicies()
@@ -24,6 +25,11 @@ export default function Policies() {
       setSelectedPolicyId(policies[0]._id)
     }
   }, [policies, selectedPolicyId])
+
+  useEffect(() => {
+    // Reset options when policy changes
+    setShowPdfOptions(false)
+  }, [selectedPolicyId])
 
 
 
@@ -199,11 +205,22 @@ export default function Policies() {
                     )}
                   </div>
 
-                  <div className="mt-12 mb-2">
-                    <button onClick={() => alert(`Downloading comprehensive policy framework for ${selectedPolicy.name}...`)} className="w-full bg-white hover:bg-gray-50 text-brand-blue font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]">
-                      View Full Policy PDF <FileText className="w-5 h-5" />
-                    </button>
-                  </div>
+                  {showPdfOptions ? (
+                    <div className="mt-12 mb-2 flex gap-4">
+                      <button onClick={() => window.open('https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', '_blank')} className="flex-1 bg-white hover:bg-gray-50 text-brand-blue font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md">
+                        Open in Viewer
+                      </button>
+                      <button onClick={() => { alert('Downloading Policy PDF...'); setShowPdfOptions(false); }} className="flex-1 bg-brand-indigo hover:bg-orange-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md border-none">
+                        Download Now
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="mt-12 mb-2">
+                       <button onClick={() => setShowPdfOptions(true)} className="w-full bg-white hover:bg-gray-50 text-brand-blue font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                         Options for Policy PDF <FileText className="w-5 h-5" />
+                       </button>
+                    </div>
+                  )}
                </motion.div>
              ) : (
                <div className="bg-gray-50 border-2 border-dashed border-gray-200 rounded-[2.5rem] p-12 h-[400px] flex flex-col items-center justify-center text-center">

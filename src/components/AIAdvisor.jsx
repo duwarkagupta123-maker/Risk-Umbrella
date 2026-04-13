@@ -29,6 +29,21 @@ export default function AIAdvisor() {
     if (!input.trim()) return;
     const userMsg = { id: Date.now(), type: 'user', text: input };
     setMessages(prev => [...prev, userMsg]);
+    
+    const lowerInput = input.toLowerCase();
+    
+    let botResponse = "Based on my analysis, your current policies are active. However, please note that future circumstances—such as undeclared modifications to your car, or unnotified property expansions—can trigger exclusions and completely stop your claim from being paid out. Always keep your exact circumstances updated to ensure full coverage!";
+    
+    if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
+       botResponse = "Hello! I am your RiskEngine AI assistant. You can ask me about your policy coverage, how to lower your premiums, or what exclusions you might face. How can I help today?";
+    } else if (lowerInput.includes('premium') || lowerInput.includes('cost') || lowerInput.includes('cheaper')) {
+       botResponse = "By bundling your Auto and Property insurance, and potentially raising your deductible by ₹10,000, you could save up to 14% on your monthly premiums without significant risk exposure.";
+    } else if (lowerInput.includes('claim') || lowerInput.includes('file') || lowerInput.includes('accident')) {
+       botResponse = "If you need to file a claim, I can guide you through our 5-minute wizard. Remember to submit clear photos of the incident. Note: always declare your modifications, as undisclosed changes can void claim payouts.";
+    } else if (lowerInput.includes('life') || lowerInput.includes('health')) {
+       botResponse = "I noticed your Term Life policy does not have a critical illness rider. Adding one could protect you against severe medical expenses. Would you like to run a simulation on your Dashboard?";
+    }
+
     setInput('');
     setIsTyping(true);
 
@@ -37,7 +52,7 @@ export default function AIAdvisor() {
       setMessages(prev => [...prev, {
         id: Date.now(),
         type: 'bot',
-        text: "Based on my analysis, your current policies are active. However, please note that future circumstances—such as undeclared modifications to your car, or unnotified property expansions—can trigger exclusions and completely stop your claim from being paid out. Always keep your exact circumstances updated to ensure full coverage!"
+        text: botResponse
       }]);
     }, 1500);
   };
