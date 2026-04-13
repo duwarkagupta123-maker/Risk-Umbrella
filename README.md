@@ -46,6 +46,9 @@ Risk Umbrella is an interactive insurance gap analyzer built for the **Finvasia 
    Open your browser and go to http://localhost:5173
 Note: Use any email and password to create account and then log in – this is a mock authentication for demo purposes
 
+Live:
+risk-umbrella.netlify.app
+
 👥 Team
 1. Snehil
 2. Duwarka Gupta
